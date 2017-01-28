@@ -103,7 +103,16 @@ Then using runtime to implement setter and getter for the property. And register
 @end
 ```
 
-### migration
+### Migration
+
+When should you migration?
+
+* Change a property's name.
+* Change a property's type.
+* Change both a property's name and type.
+* Delete a property.
+
+Add property does not need for migration.
 
 The method <code> - (BOOL)migrateWithData:(HMMigrationData *)migrationData fromVersion:(NSString *)version </code> is used for migration old version data to current version. HMObject subclass using XCode project version for class version by default. And if there are more than one versions has been released, the migration code must be write by timeline order.
 
@@ -129,11 +138,14 @@ The method <code> - (BOOL)migrateWithData:(HMMigrationData *)migrationData fromV
         [migrationData setObject:barObjectString forKey:@"addString"];
     }
 
-    if ([version isEqualToString:@"1.0.1"]) {
+    if ([version isEqualToString:@"1.0.1"] ||
+		[version isEqualToString:@"1.0.2"] ||) {
         
         // delete
         [migrationData removeObjectForKey:@"array"];
     }
+    
+    ...
     
     return YES;
 }
@@ -143,4 +155,4 @@ The method <code> - (BOOL)migrateWithData:(HMMigrationData *)migrationData fromV
 And there are some tips:
 
 1. Return YES means migration succeed while NO means failure or give up. Return NO will cause the class structure for the very verison be deleted from disk and no furture migration can be done for the specific version in the future.
-2. If there is nothing need to be done for migration from a specific version (e.g. Nothing changed or you just add some property), just return YES. But, if you have implemented migration code for a older version, the no-migration-need version must be considered as it's former version.
+2. If there is nothing need to be done for migration from a specific version (e.g. Nothing changed or you just add some property), just return YES. But, if you have implemented migration code for a older version, the no-migration-need version must using it's the migration code for it's former version. Like the migraion sample code above, version '1.0.1' and '1.0.2' have the same class structure so there is no need for migration from '1.0.1' to '1.0.2', but they must use the same migration code for migration from/to other version purpose.
