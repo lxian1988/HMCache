@@ -5,7 +5,7 @@ Overview
 [![Platform](http://cocoapod-badges.herokuapp.com/p/HMCache/badge.png)](https://github.com/swisspol/HMCache)
 [![License](http://img.shields.io/cocoapods/l/HMCache.svg)](LICENSE)
 
-HMCache is a library for data persistence in iOS app with some of other useful features. It is written from scratch and powered by Apple's NSCoding/NSCoder. 
+HMCache is a library for data persistence in OS X & iOS app with some of other useful features. It is written from scratch and powered by Apple's NSCoding/NSCoder. 
 HMCache implements a set of objects which are working interactively to provide a super convenient persistence API. These objects are list behind:
 
 * **HMObject** is a base abstract class whose subclass can automatically scans their own and superclass's (till NSObject) property names and save the keys to disk for each version of the class. The records for those versions will be used for serialize/deserialize instance of the subclass of HMObject by NSCoding methods <code>initWithCoder:</code> and <code>encodeWithCoder:</code>, and migration from a earlier serialized data to current version class structure and initilize a instance.
@@ -28,7 +28,7 @@ Download or check out the [latest release](https://github.com/lxian1988/HMCache)
 Alternatively, you can install HMCache using [CocoaPods](http://cocoapods.org/) by simply adding this line to your Podfile:
 
 ```
-pod "HMCache", "~> 0.1.1"
+pod "HMCache", "~> 0.1.2"
 ```
 
 Finally run `$ pod install`.
@@ -273,4 +273,7 @@ And the output in XCode's console would be like this:
 	
 The objects or arrays are printed out in a standard JSON formated text. An object in JSON represents a HMObject subclass instance will be marked by a "\*" to distinguish from an object represents a NSDictionary instance. Inside a HMObject subclass JSON object, it's superclass (which is also a kind of HMObject) will be marked by two "\*" to distinguish from a property.
 
-By the way, category properties will also be printed and prefixed by the category name registered by method <code> + (void)registerPropertyName:(NSString *)propertyName withCategoryName:(NSString *)categoryName </code>.
+By the way, category properties will also be printed and prefixed by the category name registered by method 
+
+<code> + (void)registerPropertyName:(NSString *)propertyName withCategoryName:(NSString *)categoryName </code>.
+

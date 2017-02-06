@@ -113,9 +113,8 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
                                                  selector:@selector(didReceiveMemoryWarning)
                                                      name:UIApplicationDidReceiveMemoryWarningNotification
                                                    object:nil];
-    }
 #endif  /* TARGET_OS_IPHONE */
-    
+    }
     return self;
 }
 
