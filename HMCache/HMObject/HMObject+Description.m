@@ -21,7 +21,7 @@
     NSMutableDictionary *subclassTree = root;
     
     Class subclass = [object class];
-    while (subclass != [NSObject class]) {
+    while (subclass != [HMObject class]) {
         
         NSMutableDictionary *tree = [NSMutableDictionary new];
         
