@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   # s.osx.deployment_target = '10.7'
   s.requires_arc = true
 
-  s.source_files = 'HMCache/*'
+  s.source_files = 'HMCache/*.{h,m}', 'HMCache/HMObject/*.{h,m}', 'HMCache/HMCacheManager/*.{h,m}', 'HMCache/HMMigrationData/*.{h,m}'
   # s.resources = 'Assets'
 
   # s.ios.exclude_files = 'Classes/osx'

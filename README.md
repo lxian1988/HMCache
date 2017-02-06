@@ -28,7 +28,7 @@ Download or check out the [latest release](https://github.com/lxian1988/HMCache)
 Alternatively, you can install HMCache using [CocoaPods](http://cocoapods.org/) by simply adding this line to your Podfile:
 
 ```
-pod "HMCache", "~> 0.1.0"
+pod "HMCache", "~> 0.1.1"
 ```
 
 Finally run `$ pod install`.
