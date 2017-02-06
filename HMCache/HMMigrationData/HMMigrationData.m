@@ -7,41 +7,23 @@
 //
 
 #import "HMMigrationData.h"
-
 #import "HMObject.h"
 
+@interface HMMigrationData ()
+
+@property (nonatomic, strong) NSMutableDictionary *keyValues;
+
+@end
+
 @implementation HMMigrationData
-
-+ (NSMutableDictionary *)classInfoDictionary {
-    static NSMutableDictionary *dictionary;
-    if (!dictionary) {
-        dictionary = [NSMutableDictionary new];
-    }
-    return dictionary;
-}
-
-+ (void)registerClassName:(NSString *)className forUnarchiver:(NSKeyedUnarchiver *)unarchiver {
-    NSString *key = [NSString stringWithFormat:@"%p", unarchiver];
-    [self classInfoDictionary][key] = className;
-}
-
-+ (NSString *)classNameForUnarchiver:(NSKeyedUnarchiver *)unarchiver {
-    NSString *key = [NSString stringWithFormat:@"%p", unarchiver];
-    return [self classInfoDictionary][key];
-}
-
-+ (void)deleteClassName:(NSString *)className forUnarchiver:(NSKeyedUnarchiver *)unarchiver {
-    NSString *key = [NSString stringWithFormat:@"%p", unarchiver];
-    [self classInfoDictionary][key] = nil;
-}
 
 #pragma mark - NSCoding
 
 - (id)initWithCoder:(NSKeyedUnarchiver *)aDecoder {
     if ((self = [super init])) {
         
-        NSString *className = [[self class] classNameForUnarchiver:aDecoder];
-        NSString *cacheVersion = [aDecoder decodeObjectForKey:@"version"];
+        NSString *className = aDecoder.deletedClassName;
+        NSString *cacheVersion = [aDecoder decodeObjectForKey:HMObjectClassVersionCacheKey];
         
         NSSet *cachePropertyNames = [HMObject propertyNamesWithClassName:className version:cacheVersion];
         
@@ -52,7 +34,7 @@
             }
         }
         
-        [[self class] deleteClassName:className forUnarchiver:aDecoder];
+        aDecoder.deletedClassName = nil;
     }
     return self;
 }
@@ -88,6 +70,16 @@
     self.keyValues[key] = nil;
 }
 
+#pragma mark - Subscripting
+
+- (id)objectForKeyedSubscript:(NSString *)key {
+    return [self.keyValues objectForKeyedSubscript:key];
+}
+
+- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key {
+    [self.keyValues setObject:obj forKeyedSubscript:key];
+}
+
 - (void)replaceKey:(NSString *)oldKey withKey:(NSString *)newKey {
     id value = self.keyValues[oldKey];
     if (!value) {
@@ -111,6 +103,21 @@
         return;
     }
     self.keyValues[newKey] = newObject;
+}
+
+@end
+
+
+#import <objc/runtime.h>
+
+@implementation NSKeyedUnarchiver (HMCacheMigration)
+
+- (void)setDeletedClassName:(NSString *)deletedClassName {
+    objc_setAssociatedObject(self, "deletedClassName", deletedClassName, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (NSString *)deletedClassName {
+    return objc_getAssociatedObject(self, "deletedClassName");
 }
 
 @end

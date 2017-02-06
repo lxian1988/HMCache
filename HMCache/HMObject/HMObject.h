@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "HMKeyMaker.h"
+
+
+HMExternStringKeyMaker(HMObjectClassVersionCacheKey)
+
+
 @interface HMObject : NSObject <NSCoding, NSCopying>
 
 + (NSSet *)propertyNames;
@@ -37,7 +43,7 @@
 
 + (NSSet *)categoryPropertyNames;
 
-- (void)registerPropertyName:(NSString *)propertyName;
-- (void)registerPropertyName:(NSString *)propertyName withCategoryName:(NSString *)categoryName;
++ (void)registerPropertyName:(NSString *)propertyName;
++ (void)registerPropertyName:(NSString *)propertyName withCategoryName:(NSString *)categoryName;
 
 @end

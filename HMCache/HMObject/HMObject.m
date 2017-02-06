@@ -17,11 +17,10 @@
 
 
 static HMCustomStringKeyMaker(HMObjectClassMapCacheKey, @"HMObjectClassMap")
+HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
 
 @interface HMObject () <NSKeyedUnarchiverDelegate>
-
-@property (nonatomic, copy) NSString *version;
 
 @end
 
@@ -154,12 +153,9 @@ static HMCustomStringKeyMaker(HMObjectClassMapCacheKey, @"HMObjectClassMap")
 - (nullable Class)unarchiver:(NSKeyedUnarchiver *)unarchiver
 cannotDecodeObjectOfClassName:(NSString *)name
              originalClasses:(NSArray<NSString *> *)classNames {
-    [HMMigrationData registerClassName:name forUnarchiver:unarchiver];
-    return [HMMigrationData class];
-}
-
-- (void)unarchiver:(NSKeyedUnarchiver *)unarchiver willReplaceObject:(id)object withObject:(id)newObject {
     
+    unarchiver.deletedClassName = name;
+    return [HMMigrationData class];
 }
 
 #pragma mark - NSCoding
@@ -171,7 +167,7 @@ cannotDecodeObjectOfClassName:(NSString *)name
         aDecoder.delegate = self;
         
         // check for migration
-        NSString *cacheVersion = [aDecoder decodeObjectForKey:@"version"];
+        NSString *cacheVersion = [aDecoder decodeObjectForKey:HMObjectClassVersionCacheKey];
         NSString *currentVersion = [[self class] currentVersion];
         
         if (![cacheVersion isEqualToString:currentVersion]) {
@@ -181,7 +177,7 @@ cannotDecodeObjectOfClassName:(NSString *)name
             for (NSString *key in cachePropertyNames) {
                 id value = [aDecoder decodeObjectForKey:key];
                 if (value) {
-                    [migrationData setObject:value forKey:key];
+                    migrationData[key] = value;
                 }
             }
             
@@ -214,6 +210,9 @@ cannotDecodeObjectOfClassName:(NSString *)name
 }
 
 - (void)encodeWithCoder:(NSKeyedArchiver *)aCoder {
+    
+    NSString *version = [[self class] currentVersion];
+    [aCoder encodeObject:version forKey:HMObjectClassVersionCacheKey];
     
     // Loop through the properties
     NSSet *propertyNames = [[self class] propertyNames];
@@ -300,12 +299,6 @@ cannotDecodeObjectOfClassName:(NSString *)name
     return YES;
 }
 
-#pragma mark - setters and getters
-
-- (NSString *)version {
-    return [[self class] currentVersion];
-}
-
 @end
 
 
@@ -324,16 +317,16 @@ cannotDecodeObjectOfClassName:(NSString *)name
     return objc_getAssociatedObject(self, "categoryPropertyNames");
 }
 
-- (void)registerPropertyName:(NSString *)propertyName {
++ (void)registerPropertyName:(NSString *)propertyName {
     [self registerPropertyName:propertyName withCategoryName:@"Category"];
 }
 
-- (void)registerPropertyName:(NSString *)propertyName withCategoryName:(NSString *)categoryName {
++ (void)registerPropertyName:(NSString *)propertyName withCategoryName:(NSString *)categoryName {
     // add to category property names for tracking
-    NSMutableSet *categoryPropertyNames = (NSMutableSet *)[[self class] categoryPropertyNames];
+    NSMutableSet *categoryPropertyNames = (NSMutableSet *)[self categoryPropertyNames];
     if (!categoryPropertyNames) {
         categoryPropertyNames = [NSMutableSet set];
-        objc_setAssociatedObject([self class], "categoryPropertyNames", categoryPropertyNames, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, "categoryPropertyNames", categoryPropertyNames, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
 
     NSString *categoryPropertyName = [NSString stringWithFormat:@"(%@)%@", categoryName, propertyName];
@@ -346,7 +339,7 @@ cannotDecodeObjectOfClassName:(NSString *)name
     }
     
     [propertyNames addObject:propertyName];
-    [[self class] cachePropertyNames:propertyNames];
+    [self cachePropertyNames:propertyNames];
 }
 
 @end
