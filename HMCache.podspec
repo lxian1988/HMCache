@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HMCache"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "An automatic NSCoding library used on iOS/MacOS."
   s.description      = <<-DESC
                        It is an automatic NSCoding library used on iOS/MacOS which also offers a mechanism for data structure migration.

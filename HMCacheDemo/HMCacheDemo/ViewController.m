@@ -22,7 +22,7 @@
     [super viewDidLoad];
     
     [self testCache];
-//    [self testDescription];
+    [self testDescription];
 }
 
 - (void)testCache {
