@@ -17,6 +17,7 @@ Extra built-in features:
 * Automatic implement NSCopying protocol for subclass.
 * Implement <code>isEqual:</code>
 * Implement <code>- (NSUInteger)hash</code>
+* Implement a automatic removed and block callback KVO API 
 * Automatic implement a JSON formated <code>- (NSString *)description</code> and <code>- (NSString *)debugDescription</code>
 * Are the features metioned above supports **category** properties.
 
@@ -28,7 +29,7 @@ Download or check out the [latest release](https://github.com/lxian1988/HMCache)
 Alternatively, you can install HMCache using [CocoaPods](http://cocoapods.org/) by simply adding this line to your Podfile:
 
 ```
-pod "HMCache", "~> 0.1.2"
+pod "HMCache", "~> 0.1.3"
 ```
 
 Finally run `$ pod install`.
@@ -178,6 +179,31 @@ If a HMObject subclass created in an older has been deleted since a specific ver
 ```
 
 It's obvious that the whole "barObject" value has been replaced by another HMMigrationData besides the one represents the root FooObject instance. The "date" is a property owned by BarObject in version "1.0.0" and now hold by barObject HMMigrationData. We read it out and replace the old "barObject" key with a new key "barObjectDate".
+
+KVO
+===========
+
+HMObject implement a KVO API with block callback to help observer it's property value change. And the observer is automatic removed when either the observed object or the observer is dealloced. The observer can also be removed manually.
+
+```
+FooObject *foo;
+    
+foo = [FooObject new];
+    
+[foo connectKeyPathValueChange:@"integer"
+						toObserver:self
+						 withBlock:^(HMObject *object, id oldValue, id newValue, BOOL *stop) {
+                             
+	NSLog(@"observed keyPath %@, oldValue = %@, newValue = %@", @"integer", oldValue, newValue);
+        
+	if ([newValue integerValue] == 10) {
+		// KVO observer will be removed
+		*stop = YES;
+	}
+}];
+```
+
+There are also a pair of convenient API methods for NSArray. You can observe the objects (must be kindOfClass of HMObject) in a NSArray by calling <code>- (void)connectObjectsKeyPathValueChange:toObserver:withBlock:</code> and undo the operation by calling the coresponding disconnect method.
 
 Description
 ===========
