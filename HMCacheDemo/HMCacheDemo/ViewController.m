@@ -21,8 +21,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self testCache];
-    [self testDescription];
+//    [self testCache];
+//    [self testDescription];
+    [self testKVO];
 }
 
 - (void)testCache {
@@ -62,6 +63,46 @@
     NSDictionary *dictionary = @{@"1" : [FooObject new],
                                  @"2" : [SubFooObject new]};
     NSLog(@"dictionary is: %@", dictionary.description);
+}
+
+- (void)testKVO {
+    
+    static FooObject *foo;
+    
+    foo = [FooObject new];
+    
+    [foo connectKeyPathValueChange:@"integer"
+                        toObserver:self
+                         withBlock:^(HMObject *object, id oldValue, id newValue, BOOL *stop) {
+                             
+        NSLog(@"observed keyPath %@, oldValue = %@, newValue = %@", @"integer", oldValue, newValue);
+        
+        
+//        if ([newValue integerValue] == 10) {
+//            *stop = YES;
+//        }
+    }];
+    
+    [foo connectKeyPathValueChange:@"string" toObserver:self withBlock:^(HMObject *object, id oldValue, id newValue, BOOL *stop) {
+        NSLog(@"observed keyPath %@, oldValue = %@, newValue = %@", @"string", oldValue, newValue);
+        
+    }];
+    
+    foo.integer = foo.integer;
+    
+    for (int i = 0; i < 20; i++) {
+        foo.integer++;
+        foo.string = [foo.string stringByAppendingString:@"string"];
+        
+        NSLog(@"foo.integer is: %d", (int)foo.integer);
+        
+        if (i == 15) {
+//            [foo disconnectKeyPathValueChange:@"integer" fromObserver:self];
+            break;
+        }
+    }
+    
+    foo = nil;
 }
 
 @end

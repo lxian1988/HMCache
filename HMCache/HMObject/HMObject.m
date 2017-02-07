@@ -9,6 +9,7 @@
 #import "HMObject.h"
 
 #import "HMObject+Cache.h"
+#import "HMObject+KVO.h"
 
 #import <objc/runtime.h>
 #import "HMKeyMaker.h"
@@ -34,6 +35,12 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
         NSLog(@"cannot find class map file, clear all cache data.");
         [self clearCache];
     }
+}
+
+- (void)dealloc {
+    
+    // Clear KVO observers
+    [self disconnectAllObservers];
 }
 
 #pragma mark - Property Names

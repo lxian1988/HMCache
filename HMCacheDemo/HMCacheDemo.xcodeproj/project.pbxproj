@@ -22,6 +22,7 @@
 		48CD7F931E484E6000302300 /* HMObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 48CD7F8C1E484E6000302300 /* HMObject.m */; };
 		48CD7F971E484E8700302300 /* FooObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 48CD7F961E484E8700302300 /* FooObject.m */; };
 		48CD7F9A1E4858AF00302300 /* BarObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 48CD7F991E4858AF00302300 /* BarObject.m */; };
+		48CD7F9D1E499CDD00302300 /* HMObject+KVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 48CD7F9C1E499CDD00302300 /* HMObject+KVO.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,8 @@
 		48CD7F961E484E8700302300 /* FooObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FooObject.m; sourceTree = "<group>"; };
 		48CD7F981E4858AF00302300 /* BarObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BarObject.h; sourceTree = "<group>"; };
 		48CD7F991E4858AF00302300 /* BarObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BarObject.m; sourceTree = "<group>"; };
+		48CD7F9B1E499CDD00302300 /* HMObject+KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "HMObject+KVO.h"; sourceTree = "<group>"; };
+		48CD7F9C1E499CDD00302300 /* HMObject+KVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "HMObject+KVO.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +154,8 @@
 				48CD7F8C1E484E6000302300 /* HMObject.m */,
 				48CD7F881E484E5F00302300 /* HMObject+Cache.h */,
 				48CD7F891E484E6000302300 /* HMObject+Cache.m */,
+				48CD7F9B1E499CDD00302300 /* HMObject+KVO.h */,
+				48CD7F9C1E499CDD00302300 /* HMObject+KVO.m */,
 				48CD7F8A1E484E6000302300 /* HMObject+Description.m */,
 			);
 			path = HMObject;
@@ -245,6 +250,7 @@
 				48CD7F8F1E484E6000302300 /* HMCacheManager.m in Sources */,
 				48CD7F971E484E8700302300 /* FooObject.m in Sources */,
 				48CD7F511E484E1000302300 /* ViewController.m in Sources */,
+				48CD7F9D1E499CDD00302300 /* HMObject+KVO.m in Sources */,
 				48CD7F4E1E484E1000302300 /* AppDelegate.m in Sources */,
 				48CD7F931E484E6000302300 /* HMObject.m in Sources */,
 				48CD7F4B1E484E1000302300 /* main.m in Sources */,
@@ -407,6 +413,7 @@
 				48CD7F5F1E484E1000302300 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -14,6 +14,10 @@
 
 @implementation FooObject
 
+- (void)dealloc {
+    NSLog(@"foo dealloc!");
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
