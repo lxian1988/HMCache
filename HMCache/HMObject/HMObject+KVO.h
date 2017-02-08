@@ -8,6 +8,7 @@
 
 #import "HMObject.h"
 
+
 /**
  * HMObject KVO notify block type.
  * If *stop has been set to YES, the KVO observer will be removed.
@@ -39,6 +40,10 @@ typedef void (^HMObjectKVOBlock)(HMObject *object, id oldValue, id newValue, BOO
  * Note: This method cannot remove KVO added by the NSObject API addObserver:forKeyPath:options:context: .
  */
 - (void)disconnectAllObservers;
+
++ (void)connectKeyPathValueChange:(NSString *)keyPath toObserver:(NSObject *)observer withBlock:(HMObjectKVOBlock)block;
++ (void)disconnectKeyPathValueChange:(NSString *)keyPath fromObserver:(NSObject *)observer;
++ (void)enumerateKeyPathObserverBlockWithBlock:(void (^)(NSString *keyPath, NSObject *observer, HMObjectKVOBlock block))block;
 
 @end
 

@@ -21,6 +21,10 @@ static HMCustomStringKeyMaker(HMObjectClassMapCacheKey, @"HMObjectClassMap")
 HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
 
+HMExternStringKeyMaker(HMObjectWillConnectAllInstanceKeyPathValueChangeNotification)
+HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification)
+
+
 @interface HMObject () <NSKeyedUnarchiverDelegate>
 
 @end
@@ -41,6 +45,49 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
     
     // Clear KVO observers
     [self disconnectAllObservers];
+    
+    // Remove notification
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        
+        // observe the KVO action notifications. See HMObject+KVO
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        [center addObserver:self selector:@selector(didReceiveWillConnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillConnectAllInstanceKeyPathValueChangeNotification object:nil];
+        [center addObserver:self selector:@selector(didReceiveWillDisconnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification object:nil];
+        
+        // Connect to exist KVO observer & keyPath
+        [[self class] enumerateKeyPathObserverBlockWithBlock:^(NSString *keyPath, NSObject *observer, HMObjectKVOBlock block) {
+            [self connectKeyPathValueChange:keyPath toObserver:observer withBlock:block];
+        }];
+    }
+    return self;
+}
+
+#pragma mark - NSNotification
+
+- (void)didReceiveWillConnectAllInstanceKeyPathValueChangeNotification:(NSNotification *)notification {
+    
+    NSDictionary *userInfo = notification.userInfo;
+    
+    NSString *keyPath = userInfo[@"keyPath"];
+    NSObject *observer = userInfo[@"observer"];
+    HMObjectKVOBlock block = userInfo[@"block"];
+    
+    [self connectKeyPathValueChange:keyPath toObserver:observer withBlock:block];
+}
+
+- (void)didReceiveWillDisconnectAllInstanceKeyPathValueChangeNotification:(NSNotification *)notification {
+    
+    NSDictionary *userInfo = notification.userInfo;
+    
+    NSString *keyPath = userInfo[@"keyPath"];
+    NSObject *observer = userInfo[@"observer"];
+    
+    [self disconnectKeyPathValueChange:keyPath fromObserver:observer];
 }
 
 #pragma mark - Property Names
@@ -280,6 +327,8 @@ cannotDecodeObjectOfClassName:(NSString *)name
     return value;
 }
 
+#pragma mark - isEqual
+
 - (BOOL)isEqual:(HMObject *)object {
     
     if (self == object) {
@@ -305,6 +354,14 @@ cannotDecodeObjectOfClassName:(NSString *)name
     
     return YES;
 }
+
+#if !DEBUG
+// Avoid crash in RELEASE mode
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key {
+    NSLog(@"%@ is setValue: %@ forUndefinedKey: %@ ", NSStringFromClass([self class]), value, key);
+}
+
+#endif
 
 @end
 

@@ -70,4 +70,8 @@
     return self;
 }
 
+- (void)dealloc {
+    NSLog(@"subfoo dealloc!");
+}
+
 @end

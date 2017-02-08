@@ -23,7 +23,8 @@
     
 //    [self testCache];
 //    [self testDescription];
-    [self testKVO];
+//    [self testKVO];
+    [self testClassKVO];
 }
 
 - (void)testCache {
@@ -103,6 +104,36 @@
     }
     
     foo = nil;
+}
+
+- (void)testClassKVO {
+
+    SubFooObject *sub = [SubFooObject new];
+    
+    FooObject *foo1 = [FooObject new];
+    foo1.string = @"foo1";
+    
+    [FooObject connectKeyPathValueChange:@"integer"
+                              toObserver:sub
+                               withBlock:^(HMObject *object, id oldValue, id newValue, BOOL *stop) {
+                                   NSLog(@"observed keyPath %@, object: %@, oldValue = %@, newValue = %@", @"integer", object, oldValue, newValue);
+                               }];
+    
+    sub = nil;
+    
+    FooObject *foo2 = [FooObject new];
+    foo2.string = @"foo2";
+    
+    foo2 = nil;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"aaa");
+        for (int i = 0; i < 2; i++) {
+            foo1.integer++;
+            foo2.integer = i * 2;
+        }
+        NSLog(@"bbb");
+    });
 }
 
 @end
