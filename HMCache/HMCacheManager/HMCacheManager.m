@@ -333,7 +333,7 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
             // save data in memory
             if (data) {
                 if (data.length < HMCACHE_MANAGER_MEMORY_CACHE_SIZE_THRESHOLD
-                    || keepInMemory) {
+                    && keepInMemory) {
                     [cache setObject:data forKey:key];
                 }
             }
