@@ -21,10 +21,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    [self testCache];
+    [self testCache];
 //    [self testDescription];
 //    [self testKVO];
-    [self testClassKVO];
+//    [self testClassKVO];
+    
+    [[HMCacheManager sharedManager] enumerateCachesInGroup:@"HMObjectRootCacheGroup" block:^(NSString *name, BOOL isSubGroup, BOOL *stop) {
+        NSLog(@"name is: %@, is subgroup: %@", name, isSubGroup ? @"YES" : @"NO");
+    }];
 }
 
 - (void)testCache {
