@@ -83,4 +83,9 @@ HMExternStringKeyMaker(HMCacheReserveGroup)
 - (id)objectForKey:(NSString *)key inGroup:(NSString *)group;
 - (id)objectForKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory;
 
+/**
+ *  Group
+ */
+- (void)enumerateCachesInGroup:(NSString *)group block:(void (^)(NSString *name, BOOL isSubGroup, BOOL *stop))block;
+
 @end

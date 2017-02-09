@@ -399,4 +399,33 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
     return [NSKeyedUnarchiver unarchiveObjectWithData:data];
 }
 
+/**
+ *  Group
+ */
+- (void)enumerateCachesInGroup:(NSString *)group block:(void (^)(NSString *name, BOOL isSubGroup, BOOL *stop))block {
+    
+    NSString *directoryPath = CacheDirectoryForGroup(group);
+    NSArray *files = [[NSFileManager defaultManager] subpathsOfDirectoryAtPath:directoryPath error:NULL];
+    
+    [files enumerateObjectsUsingBlock:^(NSString *fileName, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        NSRange range = [fileName rangeOfString:@"."];
+        if (range.length > 0) {
+            return;
+        }
+        
+        range = [fileName rangeOfString:@"/"];
+        if (range.length > 0) {
+            return;
+        }
+        
+        NSString *filePath = [directoryPath stringByAppendingPathComponent:fileName];
+        
+        BOOL isDirectory = NO;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDirectory]) {
+            block(fileName, isDirectory, stop);
+        }
+    }];
+}
+
 @end
