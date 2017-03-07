@@ -15,6 +15,7 @@
 #import "HMObject+KVO.h"
 #import "HMCacheManager.h"
 #import "HMCacheManager+Array.h"
+#import "HMCacheManager+Number.h"
 #import "HMMigrationData.h"
 
 #endif /* HMCache_h */

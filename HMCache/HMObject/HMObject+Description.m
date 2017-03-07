@@ -139,6 +139,12 @@
     NSMutableDictionary *tree = [NSMutableDictionary dictionary];
     
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
+        
+        if (![key isKindOfClass:[NSString class]]) {
+            NSString *className = NSStringFromClass([key class]);
+            key = [NSString stringWithFormat:@"%@<%p>", className, key];
+        }
+        
         if ([value isKindOfClass:[HMObject class]]) {
             tree[key] = [self treeWithObject:value];
         }
