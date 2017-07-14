@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "HMCache"
-  s.version          = "0.1.4"
+  s.version          = "0.1.5"
   s.summary          = "An automatic NSCoding library used on iOS/MacOS."
   s.description      = <<-DESC
                        It is an automatic NSCoding library used on iOS/MacOS which also offers a mechanism for data structure migration.
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/NAME'
 
   # s.platform     = :ios, '8.0'
-  s.ios.deployment_target = '7.0'
+  s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.10'
   # s.ios.deployment_target = '5.0'
   # s.osx.deployment_target = '10.7'
