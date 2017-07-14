@@ -21,7 +21,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.integer = 1;
+        _integer = 1;
         self.string = @"I am a foo!";
         self.categoryString = @"This is a NSString in category";
 //        self.barObject = [BarObject new];

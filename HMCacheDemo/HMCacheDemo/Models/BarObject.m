@@ -8,14 +8,18 @@
 
 #import "BarObject.h"
 
-//@implementation BarObject
-//
-//- (instancetype)init {
-//    self = [super init];
-//    if (self) {
-//        self.date = [NSDate date];
-//    }
-//    return self;
-//}
-//
-//@end
+@implementation BarObject
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.date = [NSDate date];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    NSLog(@"bar dealloced!");
+}
+
+@end

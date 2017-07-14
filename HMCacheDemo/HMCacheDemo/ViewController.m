@@ -21,14 +21,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self testCache];
+//    [self testCache];
 //    [self testDescription];
 //    [self testKVO];
-//    [self testClassKVO];
+    [self testClassKVO];
     
-    [[HMCacheManager sharedManager] enumerateCachesInGroup:@"HMObjectRootCacheGroup" block:^(NSString *name, BOOL isSubGroup, BOOL *stop) {
-        NSLog(@"name is: %@, is subgroup: %@", name, isSubGroup ? @"YES" : @"NO");
-    }];
+//    [[HMCacheManager sharedManager] enumerateCachesInGroup:@"HMObjectRootCacheGroup" block:^(NSString *name, BOOL isSubGroup, BOOL *stop) {
+//        NSLog(@"name is: %@, is subgroup: %@", name, isSubGroup ? @"YES" : @"NO");
+//    }];
 }
 
 - (void)testCache {
@@ -117,8 +117,10 @@
     FooObject *foo1 = [FooObject new];
     foo1.string = @"foo1";
     
+    BarObject *bar1 = [BarObject new];
+    
     [FooObject connectKeyPathValueChange:@"integer"
-                              toObserver:sub
+                              toObserver:self
                                withBlock:^(HMObject *object, id oldValue, id newValue, BOOL *stop) {
                                    NSLog(@"observed keyPath %@, object: %@, oldValue = %@, newValue = %@", @"integer", object, oldValue, newValue);
                                }];
@@ -132,9 +134,12 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"aaa");
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             foo1.integer++;
             foo2.integer = i * 2;
+            
+            bar1.integer++;
+            bar1.date = [[NSDate date] dateByAddingTimeInterval:i];
         }
         NSLog(@"bbb");
     });
