@@ -24,7 +24,8 @@
 //    [self testCache];
 //    [self testDescription];
 //    [self testKVO];
-    [self testClassKVO];
+//    [self testClassKVO];
+    [self testBind];
     
 //    [[HMCacheManager sharedManager] enumerateCachesInGroup:@"HMObjectRootCacheGroup" block:^(NSString *name, BOOL isSubGroup, BOOL *stop) {
 //        NSLog(@"name is: %@, is subgroup: %@", name, isSubGroup ? @"YES" : @"NO");
@@ -143,6 +144,24 @@
         }
         NSLog(@"bbb");
     });
+}
+
+- (void)testBind {
+    
+    FooObject *foo = [FooObject new];
+    foo.string = @"";
+    
+    UILabel *label = [UILabel new];
+    
+    HMBind(label, text, foo, string);
+    
+    for (int i = 0; i < 10; i++) {
+        foo.string = [NSString stringWithFormat:@"%d", i];
+        
+        NSLog(@"foo.string is: %@", foo.string);
+        NSLog(@"label.text is: %@", label.text);
+    }
+    
 }
 
 @end

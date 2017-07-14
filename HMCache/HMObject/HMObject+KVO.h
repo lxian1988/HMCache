@@ -48,6 +48,16 @@ typedef void (^HMObjectKVOBlock)(HMObject *object, id oldValue, id newValue, BOO
 @end
 
 
+#define HMBind(target, keypath1, object, keypath2)    \
+[target bindKeyPath:@#keypath1 toObject:object keyPath:@#keypath2];
+
+@interface NSObject (Bind)
+
+- (void)bindKeyPath:(NSString *)keyPath toObject:(HMObject *)object keyPath:(NSString *)objectKeyPath;
+
+@end
+
+
 // NSArray convenient methods
 @interface NSArray (HMObjectKVO)
 
@@ -55,3 +65,4 @@ typedef void (^HMObjectKVOBlock)(HMObject *object, id oldValue, id newValue, BOO
 - (void)disconnectObjectsKeyPathValueChange:(NSString *)keyPath fromObserver:(NSObject *)observer;
 
 @end
+

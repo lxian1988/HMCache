@@ -340,6 +340,17 @@ HMStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification
 @end
 
 
+@implementation NSObject (Bind)
+
+- (void)bindKeyPath:(NSString *)keyPath toObject:(HMObject *)object keyPath:(NSString *)objectKeyPath {
+    [object connectKeyPathValueChange:objectKeyPath toObserver:self withBlock:^(HMObject *object, id oldValue, id newValue, BOOL *stop) {
+        [self setValue:newValue forKeyPath:keyPath];
+    }];
+}
+
+@end
+
+
 @implementation NSArray (HMObjectKVO)
 
 - (void)connectObjectsKeyPathValueChange:(NSString *)keyPath toObserver:(NSObject *)observer withBlock:(HMObjectKVOBlock)block {
