@@ -56,8 +56,8 @@ HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotifi
         
         // observe the KVO action notifications. See HMObject+KVO
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(didReceiveWillConnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillConnectAllInstanceKeyPathValueChangeNotification object:nil];
-        [center addObserver:self selector:@selector(didReceiveWillDisconnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification object:nil];
+        [center addObserver:self selector:@selector(didReceiveWillConnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillConnectAllInstanceKeyPathValueChangeNotification object:[self class]];
+        [center addObserver:self selector:@selector(didReceiveWillDisconnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification object:[self class]];
         
         // Connect to exist KVO observer & keyPath
         [[self class] enumerateKeyPathObserverBlockWithBlock:^(NSString *keyPath, NSObject *observer, HMObjectKVOBlock block) {

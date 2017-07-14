@@ -8,8 +8,9 @@
 
 #import "HMObject.h"
 
-//@interface BarObject : HMObject
-//
-//@property (nonatomic, copy) NSDate *date;
-//
-//@end
+@interface BarObject : HMObject
+
+@property (nonatomic, assign) NSInteger integer;
+@property (nonatomic, copy) NSDate *date;
+
+@end

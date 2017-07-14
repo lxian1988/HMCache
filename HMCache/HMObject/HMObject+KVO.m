@@ -250,9 +250,10 @@ HMStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification
                                @"observer" : observer,
                                @"block" : block};
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:HMObjectWillConnectAllInstanceKeyPathValueChangeNotification
-                                                        object:nil
-                                                      userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:HMObjectWillConnectAllInstanceKeyPathValueChangeNotification
+     object:self
+     userInfo:userInfo];
     
     // Save information for unnewed instances
     NSMutableDictionary *keyPaths = [self observedInstanceKeyPaths];
@@ -281,9 +282,10 @@ HMStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification
     NSDictionary *userInfo = @{@"keyPath" : keyPath,
                                @"observer" : observer};
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification
-                                                        object:nil
-                                                      userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification
+     object:self
+     userInfo:userInfo];
     
     // Delete information for unnewed instances
     NSMutableDictionary *keyPaths = [self observedInstanceKeyPaths];
