@@ -18,24 +18,13 @@
     NSLog(@"foo dealloc!");
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _integer = 1;
-        self.string = @"I am a foo!";
-        self.categoryString = @"This is a NSString in category";
-//        self.barObject = [BarObject new];
-    }
-    return self;
-}
-
 - (BOOL)migrateWithData:(HMMigrationData *)migrationData fromVersion:(NSString *)version {
-    if ([version isEqualToString:@"1.0.0"]) {
-        HMMigrationData *barObject = migrationData[@"barObject"];
-        NSDate *barObjectDate = barObject[@"date"];
-        [migrationData replaceKey:@"barObject" withKey:@"barObjectDate" object:barObjectDate];
-    }
-    
+//    if ([version isEqualToString:@"1.0.0"]) {
+//        HMMigrationData *barObject = migrationData[@"barObject"];
+//        NSDate *barObjectDate = barObject[@"date"];
+//        [migrationData replaceKey:@"barObject" withKey:@"barObjectDate" object:barObjectDate];
+//    }
+//    
     return YES;
 }
 

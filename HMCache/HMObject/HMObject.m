@@ -9,7 +9,6 @@
 #import "HMObject.h"
 
 #import "HMObject+Cache.h"
-#import "HMObject+KVO.h"
 
 #import <objc/runtime.h>
 #import "HMKeyMaker.h"
@@ -39,55 +38,6 @@ HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotifi
         NSLog(@"cannot find class map file, clear all cache data.");
         [self clearCache];
     }
-}
-
-- (void)dealloc {
-    
-    // Clear KVO observers
-    [self disconnectAllObservers];
-    
-    // Remove notification
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        
-        // observe the KVO action notifications. See HMObject+KVO
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(didReceiveWillConnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillConnectAllInstanceKeyPathValueChangeNotification object:[self class]];
-        [center addObserver:self selector:@selector(didReceiveWillDisconnectAllInstanceKeyPathValueChangeNotification:) name:HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification object:[self class]];
-        
-        // Connect to exist KVO observer & keyPath
-        [[self class] enumerateKeyPathObserverBlockWithBlock:^(NSString *keyPath, NSObject *observer, HMObjectKVOBlock block) {
-            [self connectKeyPathValueChange:keyPath toObserver:observer withBlock:block];
-        }];
-    }
-    return self;
-}
-
-#pragma mark - NSNotification
-
-- (void)didReceiveWillConnectAllInstanceKeyPathValueChangeNotification:(NSNotification *)notification {
-    
-    NSDictionary *userInfo = notification.userInfo;
-    
-    NSString *keyPath = userInfo[@"keyPath"];
-    NSObject *observer = userInfo[@"observer"];
-    HMObjectKVOBlock block = userInfo[@"block"];
-    
-    [self connectKeyPathValueChange:keyPath toObserver:observer withBlock:block];
-}
-
-- (void)didReceiveWillDisconnectAllInstanceKeyPathValueChangeNotification:(NSNotification *)notification {
-    
-    NSDictionary *userInfo = notification.userInfo;
-    
-    NSString *keyPath = userInfo[@"keyPath"];
-    NSObject *observer = userInfo[@"observer"];
-    
-    [self disconnectKeyPathValueChange:keyPath fromObserver:observer];
 }
 
 #pragma mark - Property Names
@@ -166,33 +116,35 @@ HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotifi
     
     // Loop through our superclasses until we hit NSObject
     propertyNames = [NSMutableSet set];
-    Class subclass = self;
-    while (subclass != [NSObject class]) {
-        unsigned int propertyCount;
-        objc_property_t *properties = class_copyPropertyList(subclass, &propertyCount);
-        for (int i = 0; i < propertyCount; i++) {
-            // Get property name
-            objc_property_t property = properties[i];
-            const char *propertyName = property_getName(property);
-            NSString *key = @(propertyName);
-            
-            // Check if there is a backing ivar
-            char *ivar = property_copyAttributeValue(property, "V");
-            if (ivar) {
-                // Check if ivar has KVC-compliant name
-                NSString *ivarName = @(ivar);
-                if ([ivarName isEqualToString:key] ||
-                    [ivarName isEqualToString:[@"_" stringByAppendingString:key]]) {
-                    // setValue:forKey: will work
-                    [propertyNames addObject:key];
-                }
-                free(ivar);
+
+    unsigned int propertyCount;
+    objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
+    for (int i = 0; i < propertyCount; i++) {
+        // Get property name
+        objc_property_t property = properties[i];
+        const char *propertyName = property_getName(property);
+        NSString *key = @(propertyName);
+
+        // Check if there is a backing ivar
+        char *ivar = property_copyAttributeValue(property, "V");
+        if (ivar) {
+            // Check if ivar has KVC-compliant name
+            NSString *ivarName = @(ivar);
+            if ([ivarName isEqualToString:key] ||
+                [ivarName isEqualToString:[@"_" stringByAppendingString:key]]) {
+                // setValue:forKey: will work
+                [propertyNames addObject:key];
             }
+            free(ivar);
         }
-        free(properties);
-        subclass = [subclass superclass];
     }
-    
+    free(properties);
+
+    if ([self superclass] != [NSObject class]) {
+        NSSet *superClassPropertiesName = [[self superclass] propertyNames];
+        [propertyNames unionSet:superClassPropertiesName];
+    }
+
     // Cache in runtime memory
     objc_setAssociatedObject(self, kPropertyNames.UTF8String, propertyNames, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     

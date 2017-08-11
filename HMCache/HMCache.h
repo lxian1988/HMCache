@@ -12,7 +12,6 @@
 #import "HMKeyMaker.h"
 #import "HMObject.h"
 #import "HMObject+Cache.h"
-#import "HMObject+KVO.h"
 #import "HMCacheManager.h"
 #import "HMCacheManager+Array.h"
 #import "HMCacheManager+Number.h"
