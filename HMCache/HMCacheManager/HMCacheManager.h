@@ -50,7 +50,7 @@ HMExternStringKeyMaker(HMCacheReserveGroup)
  *  clear all cache data
  */
 - (void)clearCache;
-- (void)clearCacheWithCompletion:(void (^)())completion;
+- (void)clearCacheWithCompletion:(void (^)(void))completion;
 
 /**
  *  clear cache data of a group

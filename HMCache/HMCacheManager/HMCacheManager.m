@@ -208,7 +208,7 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
     [self clearCacheWithCompletion:nil];
 }
 
-- (void)clearCacheWithCompletion:(void (^)())completion {
+- (void)clearCacheWithCompletion:(void (^)(void))completion {
     
     NSLog(@"clearing cache...");
     
@@ -232,7 +232,7 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
     
     dispatch_async(_ioQueue, ^{
         
-        [self.cacheOfGroups removeObjectForKey:group];
+        self.cacheOfGroups[group] = nil;
         
         [[NSFileManager defaultManager] removeItemAtPath:CacheDirectoryForGroup(group) error:NULL];
     });
