@@ -227,7 +227,11 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
 }
 
 - (void)clearGroup:(NSString *)group {
-    
+
+    if (group.length == 0) {
+        return;
+    }
+
     NSLog(@"clearing group %@ ...", group);
     
     dispatch_async(_ioQueue, ^{
