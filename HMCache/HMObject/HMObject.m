@@ -20,8 +20,6 @@ static HMCustomStringKeyMaker(HMObjectClassMapCacheKey, @"HMObjectClassMap")
 HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
 
-HMExternStringKeyMaker(HMObjectWillConnectAllInstanceKeyPathValueChangeNotification)
-HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotification)
 
 
 @interface HMObject () <NSKeyedUnarchiverDelegate>
@@ -40,6 +38,16 @@ HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotifi
     }
 }
 
++ (dispatch_queue_t)queue {
+
+    static dispatch_queue_t queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        queue = dispatch_queue_create("com.hmobject.map.access.queue", DISPATCH_QUEUE_SERIAL);
+    });
+    return queue;
+}
+
 #pragma mark - Property Names
 
 + (NSString *)currentVersion {
@@ -55,44 +63,55 @@ HMExternStringKeyMaker(HMObjectWillDisconnectAllInstanceKeyPathValueChangeNotifi
 }
 
 + (NSSet *)propertyNamesWithClassName:(NSString *)className version:(NSString *)version {
-    
-    NSString *key = [self propertyNamesCacheKeyWithClassName:className version:version];
-    
-    // Already have runtime cache some no need to keep in memory
-    NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                         inGroup:HMCacheReserveGroup];
-    return classMap[key];
+
+    __block NSSet *propertyNames = nil;
+
+    dispatch_sync(self.queue, ^{
+        NSString *key = [self propertyNamesCacheKeyWithClassName:className version:version];
+
+        // Already have runtime cache some no need to keep in memory
+        NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
+                                                                             inGroup:HMCacheReserveGroup];
+        propertyNames = classMap[key];
+    });
+
+    return propertyNames;
 }
 
 + (void)cachePropertyNames:(NSSet *)propertyNames {
-    
-    NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:[self currentVersion]];
-    
-    // Already have runtime cache some no need to keep in memory
-    NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                         inGroup:HMCacheReserveGroup];
-    if (!classMap) {
-        classMap = [NSMutableDictionary dictionary];
-    }
-    classMap[key] = propertyNames;
-    [[HMCacheManager sharedManager] cacheObject:classMap
-                                         forKey:HMObjectClassMapCacheKey
-                                        inGroup:HMCacheReserveGroup];
+
+    dispatch_async(self.queue, ^{
+        NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:[self currentVersion]];
+
+        // Already have runtime cache some no need to keep in memory
+        NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
+                                                                             inGroup:HMCacheReserveGroup];
+        if (!classMap) {
+            classMap = [NSMutableDictionary dictionary];
+        }
+        classMap[key] = propertyNames;
+        [[HMCacheManager sharedManager] cacheObject:classMap
+                                             forKey:HMObjectClassMapCacheKey
+                                            inGroup:HMCacheReserveGroup];
+    });
 }
 
 + (void)deletePropertyNamesWithVersion:(NSString *)version {
-    
-    NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:version];
-    
-    NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                         inGroup:HMCacheReserveGroup];
-    if (!classMap) {
-        return;
-    }
-    classMap[key] = nil;
-    [[HMCacheManager sharedManager] cacheObject:classMap
-                                         forKey:HMObjectClassMapCacheKey
-                                        inGroup:HMCacheReserveGroup];
+
+    dispatch_async(self.queue, ^{
+
+        NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:version];
+
+        NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
+                                                                             inGroup:HMCacheReserveGroup];
+        if (!classMap) {
+            return;
+        }
+        classMap[key] = nil;
+        [[HMCacheManager sharedManager] cacheObject:classMap
+                                             forKey:HMObjectClassMapCacheKey
+                                            inGroup:HMCacheReserveGroup];
+    });
 }
 
 + (NSSet *)propertyNames {

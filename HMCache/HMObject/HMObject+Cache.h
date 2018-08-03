@@ -10,8 +10,8 @@
 
 @interface HMObject (Cache)
 
-@property (nonatomic, copy, readonly) NSString *cacheKey;
-@property (nonatomic, copy, readonly) NSString *cacheGroup;
+@property (readonly) NSString *cacheKey;
+@property (readonly) NSString *cacheGroup;
 
 /**
  * Fetch a cached object instance with default key.
