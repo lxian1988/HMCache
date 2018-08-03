@@ -329,17 +329,15 @@ cannotDecodeObjectOfClassName:(NSString *)name
 #if !DEBUG
 // Avoid crash in RELEASE mode
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
-    NSLog(@"%@ is setValue: %@ forUndefinedKey: %@ ", NSStringFromClass([self class]), value, key);
+    NSLog(@"%@ is setting value: %@ for undefined key: %@ ", NSStringFromClass([self class]), value, key);
 }
 
 - (id)valueForUndefinedKey:(NSString *)key {
-    NSLog(@"%@ is read value: %@ forUndefinedKey: %@ ", NSStringFromClass([self class]), value, key);
+    NSLog(@"%@ is reading undefined key: %@ ", NSStringFromClass([self class]), key);
     return nil;
 }
 
 #endif
-
-
 
 @end
 
