@@ -38,7 +38,7 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
     }
 }
 
-+ (dispatch_queue_t)queue {
++ (dispatch_queue_t)propertiesAccessQueue {
 
     static dispatch_queue_t queue;
     static dispatch_once_t onceToken;
@@ -66,7 +66,7 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
     __block NSSet *propertyNames = nil;
 
-    dispatch_sync(self.queue, ^{
+    dispatch_sync(self.propertiesAccessQueue, ^{
         NSString *key = [self propertyNamesCacheKeyWithClassName:className version:version];
 
         // Already have runtime cache some no need to keep in memory
@@ -80,7 +80,7 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
 + (void)cachePropertyNames:(NSSet *)propertyNames {
 
-    dispatch_async(self.queue, ^{
+    dispatch_async(self.propertiesAccessQueue, ^{
         NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:[self currentVersion]];
 
         // Already have runtime cache some no need to keep in memory
@@ -98,7 +98,7 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
 + (void)deletePropertyNamesWithVersion:(NSString *)version {
 
-    dispatch_async(self.queue, ^{
+    dispatch_async(self.propertiesAccessQueue, ^{
 
         NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:version];
 
