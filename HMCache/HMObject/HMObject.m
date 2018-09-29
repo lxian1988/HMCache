@@ -31,7 +31,8 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 + (void)load {
     // Check classMap file. If broken, remove all HMObject Cache files.
     NSDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                  inGroup:HMCacheReserveGroup];
+                                                                  inGroup:HMCacheReserveGroup
+                                                             keepInMemory:YES];
     if (!classMap) {
         NSLog(@"cannot find class map file, clear all cache data.");
         [self clearCache];
@@ -71,7 +72,8 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
         // Already have runtime cache some no need to keep in memory
         NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                             inGroup:HMCacheReserveGroup];
+                                                                             inGroup:HMCacheReserveGroup
+                                                                        keepInMemory:YES];
         propertyNames = classMap[key];
     });
 
@@ -85,14 +87,16 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
 
         // Already have runtime cache some no need to keep in memory
         NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                             inGroup:HMCacheReserveGroup];
+                                                                             inGroup:HMCacheReserveGroup
+                                                                        keepInMemory:YES];
         if (!classMap) {
             classMap = [NSMutableDictionary dictionary];
         }
         classMap[key] = propertyNames;
         [[HMCacheManager sharedManager] cacheObject:classMap
                                              forKey:HMObjectClassMapCacheKey
-                                            inGroup:HMCacheReserveGroup];
+                                            inGroup:HMCacheReserveGroup
+                                       keepInMemory:YES];
     });
 }
 
@@ -103,14 +107,16 @@ HMCustomStringKeyMaker(HMObjectClassVersionCacheKey, @"classVersion")
         NSString *key = [self propertyNamesCacheKeyWithClassName:NSStringFromClass(self) version:version];
 
         NSMutableDictionary *classMap = [[HMCacheManager sharedManager] objectForKey:HMObjectClassMapCacheKey
-                                                                             inGroup:HMCacheReserveGroup];
+                                                                             inGroup:HMCacheReserveGroup
+                                                                        keepInMemory:YES];
         if (!classMap) {
             return;
         }
         classMap[key] = nil;
         [[HMCacheManager sharedManager] cacheObject:classMap
                                              forKey:HMObjectClassMapCacheKey
-                                            inGroup:HMCacheReserveGroup];
+                                            inGroup:HMCacheReserveGroup
+                                       keepInMemory:YES];
     });
 }
 
