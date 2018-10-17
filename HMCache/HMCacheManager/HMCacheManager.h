@@ -62,6 +62,7 @@ HMExternStringKeyMaker(HMCacheReserveGroup)
  */
 - (void)removeCacheForKey:(NSString *)key;
 - (void)removeCacheForKey:(NSString *)key inGroup:(NSString *)group;
+- (void)removeCacheForKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion;
 
 /**
  *  NSData
@@ -69,6 +70,7 @@ HMExternStringKeyMaker(HMCacheReserveGroup)
 - (void)cacheData:(NSData *)data forKey:(NSString *)key;
 - (void)cacheData:(NSData *)data forKey:(NSString *)key inGroup:(NSString *)group;
 - (void)cacheData:(NSData *)data forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory;
+- (void)cacheData:(NSData *)data forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory completion:(void (^)(void))completion;
 - (NSData *)dataForKey:(NSString *)key;
 - (NSData *)dataForKey:(NSString *)key inGroup:(NSString *)group;
 - (NSData *)dataForKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory;
@@ -79,6 +81,7 @@ HMExternStringKeyMaker(HMCacheReserveGroup)
 - (void)cacheObject:(id<NSCoding>)object forKey:(NSString *)key;
 - (void)cacheObject:(id<NSCoding>)object forKey:(NSString *)key inGroup:(NSString *)group;
 - (void)cacheObject:(id<NSCoding>)object forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory;
+- (void)cacheObject:(id<NSCoding>)object forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory completion:(void (^)(void))completion;
 - (id)objectForKey:(NSString *)key;
 - (id)objectForKey:(NSString *)key inGroup:(NSString *)group;
 - (id)objectForKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory;

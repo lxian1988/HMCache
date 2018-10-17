@@ -75,14 +75,17 @@ static HMStringKeyMaker(HMObjectRootCacheGroup)
 }
 
 - (void)cacheForKey:(NSString *)key inGroup:(NSString *)group {
-    
+    [self cacheForKey:key inGroup:nil completion:nil];
+}
+
+- (void)cacheForKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion {
     if (self.cacheKey.length == 0 && self.cacheGroup.length == 0) {
         self.cacheKey = key;
         self.cacheGroup = group;
     }
-    
+
     NSString *subgroup = [NSString stringWithFormat:@"%@.%@", HMObjectRootCacheGroup, group ? : @""];
-    [[HMCacheManager sharedManager] cacheObject:self forKey:key inGroup:subgroup];
+    [[HMCacheManager sharedManager] cacheObject:self forKey:key inGroup:subgroup keepInMemory:NO completion:completion];
 }
 
 - (void)removeCache {
@@ -132,8 +135,12 @@ static HMStringKeyMaker(HMObjectRootCacheGroup)
 }
 
 + (void)cacheArray:(NSArray<HMObject *> *)array forKey:(NSString *)key inGroup:(NSString *)group {
+    [self cacheArray:array forKey:key inGroup:nil completion:nil];
+}
+
++ (void)cacheArray:(NSArray<HMObject *> *)array forKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion {
     NSString *subgroup = [NSString stringWithFormat:@"%@.%@", HMObjectRootCacheGroup, group ? : @""];
-    [[HMCacheManager sharedManager] cacheObject:array forKey:key inGroup:subgroup];
+    [[HMCacheManager sharedManager] cacheObject:array forKey:key inGroup:subgroup keepInMemory:NO completion:completion];
 }
 
 @end

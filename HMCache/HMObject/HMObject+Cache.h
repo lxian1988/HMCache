@@ -44,6 +44,11 @@
 - (void)cacheForKey:(NSString *)key inGroup:(NSString *)group;
 
 /**
+ * Cache a object instance with a specified key and group with a completion block
+ */
+- (void)cacheForKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion;
+
+/**
  * Delete cache of the object instance;
  */
 - (void)removeCache;
@@ -87,5 +92,10 @@
  * Fetch a cached array of object instance with a specified key and group.
  */
 + (void)cacheArray:(NSArray<HMObject *> *)array forKey:(NSString *)key inGroup:(NSString *)group;
+
+/**
+ * Fetch a cached array of object instance with a specified key and group with a completion block.
+ */
++ (void)cacheArray:(NSArray<HMObject *> *)array forKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion;
 
 @end

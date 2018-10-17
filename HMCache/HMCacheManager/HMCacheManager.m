@@ -247,15 +247,25 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
 }
 
 - (void)removeCacheForKey:(NSString *)key inGroup:(NSString *)group {
-    
+    [self removeCacheForKey:key inGroup:HMCacheDefaultGroup completion:nil];
+}
+
+- (void)removeCacheForKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion {
+
     dispatch_async(_ioQueue, ^{
-        
+
         NSCache *cache = self.cacheOfGroups[group];
         if (cache) {
             [cache removeObjectForKey:key];
         }
-        
+
         [[NSFileManager defaultManager] removeItemAtPath:CachePathForKeyInGroup(key, group) error:NULL];
+
+        if (completion) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion();
+            });
+        }
     });
 }
 
@@ -269,27 +279,27 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
     [self cacheData:data forKey:key inGroup:group keepInMemory:NO];
 }
 
-- (void)cacheData:(NSData *)data
-           forKey:(NSString *)key
-          inGroup:(NSString *)group
-     keepInMemory:(BOOL)keepInMemory {
-    
+- (void)cacheData:(NSData *)data forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory {
+    [self cacheData:data forKey:key inGroup:group keepInMemory:NO completion:nil];
+}
+
+- (void)cacheData:(NSData *)data forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory completion:(void (^)(void))completion {
     NSParameterAssert(data);
     NSParameterAssert(key.length);
-    
+
     if (group.length == 0) {
         group = HMCacheDefaultGroup;
     }
-    
+
     dispatch_async(_ioQueue, ^{
-        
+
         NSCache *cache = self.cacheOfGroups[group];
         if (!cache) {
             cache = [NSCache new];
             cache.name = [NSString stringWithFormat:@"HMCache.%@", group];
             self.cacheOfGroups[group] = cache;
         }
-        
+
         if (keepInMemory
             || data.length < HMCACHE_MANAGER_MEMORY_CACHE_SIZE_THRESHOLD) {
             [cache setObject:data forKey:key cost:data.length];
@@ -297,8 +307,14 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
         else {
             [cache removeObjectForKey:key];
         }
-        
+
         [data writeToFile:CachePathForKeyInGroup(key, group) atomically:YES];
+
+        if (completion) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion();
+            });
+        }
     });
 }
 
@@ -357,13 +373,13 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
     [self cacheObject:object forKey:key inGroup:group keepInMemory:NO];
 }
 
-- (void)cacheObject:(id<NSCoding>)object
-             forKey:(NSString *)key
-            inGroup:(NSString *)group
-       keepInMemory:(BOOL)keepInMemory {
-    
+- (void)cacheObject:(id<NSCoding>)object forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory {
+    [self cacheObject:object forKey:key inGroup:group keepInMemory:NO completion:nil];
+}
+
+- (void)cacheObject:(id<NSCoding>)object forKey:(NSString *)key inGroup:(NSString *)group keepInMemory:(BOOL)keepInMemory completion:(void (^)(void))completion {
 #ifdef DEBUG
-    
+
     if (group == HMCacheReserveGroup) {
         NSString *className = NSStringFromClass([(NSObject *)object class]);
         className = [className stringByReplacingOccurrencesOfString:@"_" withString:@""];
@@ -371,16 +387,16 @@ static NSString *CachePathForKeyInGroup(NSString *key, NSString *group) {
             NSAssert(NO, @"Only object of class from NSFoundation can be cached in HMCacheReserveGroup!");
         }
     }
-    
+
 #endif
-    
+
     if (!object) {
         [self removeCacheForKey:key inGroup:group];
         return;
     }
-    
+
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object];
-    [self cacheData:data forKey:key inGroup:group keepInMemory:keepInMemory];
+    [self cacheData:data forKey:key inGroup:group keepInMemory:keepInMemory completion:completion];
 }
 
 - (id)objectForKey:(NSString *)key {
