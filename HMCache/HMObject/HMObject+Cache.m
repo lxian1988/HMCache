@@ -89,15 +89,19 @@ static HMStringKeyMaker(HMObjectRootCacheGroup)
 }
 
 - (void)removeCache {
+    [self removeCacheWithCompletion:nil];
+}
+
+- (void)removeCacheWithCompletion:(void (^)(void))completion {
     
-    NSString *key = self.cacheKey;
-    NSString *group = self.cacheGroup;
-    
-    NSString *subgroup = [NSString stringWithFormat:@"%@.%@", HMObjectRootCacheGroup, group ? : @""];
-    [[HMCacheManager sharedManager] removeCacheForKey:key inGroup:subgroup];
-    
-    self.cacheKey = nil;
-    self.cacheGroup = nil;
+    NSString *key       = self.cacheKey;
+    NSString *group     = self.cacheGroup;
+    NSString *subgroup  = [NSString stringWithFormat:@"%@.%@", HMObjectRootCacheGroup, group ? : @""];
+
+    self.cacheKey       = nil;
+    self.cacheGroup     = nil;
+
+    [[HMCacheManager sharedManager] removeCacheForKey:key inGroup:subgroup completion:completion];
 }
 
 + (void)clearCache {

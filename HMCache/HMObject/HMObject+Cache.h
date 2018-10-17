@@ -49,9 +49,14 @@
 - (void)cacheForKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion;
 
 /**
- * Delete cache of the object instance;
+ * Delete cache of the object instance.
  */
 - (void)removeCache;
+
+/**
+ * Delete cache of the object instance with a completion
+ */
+- (void)removeCacheWithCompletion:(void (^)(void))completion;
 
 /**
  * Clear cache for all HMObject subclass.
