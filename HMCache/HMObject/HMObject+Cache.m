@@ -75,7 +75,7 @@ static HMStringKeyMaker(HMObjectRootCacheGroup)
 }
 
 - (void)cacheForKey:(NSString *)key inGroup:(NSString *)group {
-    [self cacheForKey:key inGroup:nil completion:nil];
+    [self cacheForKey:key inGroup:group completion:nil];
 }
 
 - (void)cacheForKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion {
@@ -139,7 +139,7 @@ static HMStringKeyMaker(HMObjectRootCacheGroup)
 }
 
 + (void)cacheArray:(NSArray<HMObject *> *)array forKey:(NSString *)key inGroup:(NSString *)group {
-    [self cacheArray:array forKey:key inGroup:nil completion:nil];
+    [self cacheArray:array forKey:key inGroup:group completion:nil];
 }
 
 + (void)cacheArray:(NSArray<HMObject *> *)array forKey:(NSString *)key inGroup:(NSString *)group completion:(void (^)(void))completion {
